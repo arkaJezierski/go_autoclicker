@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"os"
 	"time"
+
 	"github.com/go-vgo/robotgo"
 	hook "github.com/robotn/gohook"
 )
 
 func main() {
-        fmt.Println("Clicker started.")
+	fmt.Println("Clicker started.")
 	fmt.Println("Press + (key: 43) – ON/OFF clicker.")
 	fmt.Println("Press - (key: 45) – save/cancel fixed position.")
 	fmt.Println("Press ESC – Shutdown aplication.")
@@ -17,7 +18,6 @@ func main() {
 	clicking := false
 	useFixedPosition := false
 	var fixedX, fixedY int
-
 
 	go func() {
 		for ev := range hook.Start() {
@@ -47,24 +47,30 @@ func main() {
 						useFixedPosition = false
 						fmt.Println("Fixed position cleared. Using live cursor.")
 					}
-					
+
 				default: // Debug
-					 fmt.Printf("KeyDown: %v\n", ev.Keychar)
+					fmt.Printf("KeyDown: %v\n", ev.Keychar)
 				}
 			}
 		}
 	}()
 
-	for  {
+	for {
 		if clicking {
 			var x, y int
+
 			if useFixedPosition {
+				origX, origY := robotgo.GetMousePos()
 				robotgo.MoveMouse(fixedX, fixedY)
+				robotgo.Click("left", false)
+				robotgo.MoveMouse(origX, origY)
 				x, y = fixedX, fixedY
+
 			} else {
 				x, y = robotgo.GetMousePos()
+				robotgo.Click("left", false)
+
 			}
-			robotgo.Click("left", false)
 			fmt.Printf("Click: (%d, %d)\n", x, y)
 			time.Sleep(40 * time.Millisecond)
 		} else {
@@ -73,4 +79,3 @@ func main() {
 
 	}
 }
-
