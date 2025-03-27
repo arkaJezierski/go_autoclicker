@@ -11,7 +11,7 @@ import (
 
 func main() {
 	fmt.Println("Clicker started.")
-	fmt.Println("Press + (key: 43) – ON/OFF clicker.")
+	fmt.Println("Press ` (key: 96) – ON/OFF clicker.")
 	fmt.Println("Press - (key: 45) – save/cancel fixed position.")
 	fmt.Println("Press ESC – Shutdown aplication.")
 
@@ -19,11 +19,16 @@ func main() {
 	useFixedPosition := false
 	var fixedX, fixedY int
 
+	actionKeys := map[string]int{
+		"toggle": 96, // `
+		"fix":    9,  // Tab
+	}
+
 	go func() {
 		for ev := range hook.Start() {
 			if ev.Kind == hook.KeyDown {
-				switch ev.Keychar {
-				case 43: // +
+				switch int(ev.Keychar) {
+				case actionKeys["toggle"]:
 					clicking = !clicking
 					if clicking {
 						fmt.Println("Clicking: ON")
@@ -33,7 +38,7 @@ func main() {
 				case 27: // ESC
 					fmt.Println("Aplication down")
 					os.Exit(0)
-				case 45: // -
+				case actionKeys["fix"]:
 					if clicking {
 						clicking = !clicking
 						fmt.Println("Clicking: OFF")
@@ -72,7 +77,7 @@ func main() {
 
 			}
 			fmt.Printf("Click: (%d, %d)\n", x, y)
-			time.Sleep(40 * time.Millisecond)
+			time.Sleep(25 * time.Millisecond)
 		} else {
 			time.Sleep(100 * time.Millisecond)
 		}
